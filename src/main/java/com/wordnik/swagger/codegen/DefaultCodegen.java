@@ -699,8 +699,6 @@ public class DefaultCodegen {
     op.headerParams = addHasMore(headerParams);
     // op.cookieParams = cookieParams;
     op.formParams = addHasMore(formParams);
-    // legacy support
-    op.nickname = toVarName(operationId);
 
     if(op.allParams.size() > 0) 
       op.hasParams = true;
@@ -872,5 +870,7 @@ public class DefaultCodegen {
     }
     opList.add(co);
     co.baseName = tag;    
+    //co.nickname = co.httpMethod.toLowerCase() + co.baseName;
+    co.nickname = toVarName(co.operationId);
   }
 }

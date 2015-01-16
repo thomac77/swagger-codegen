@@ -55,7 +55,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
         "void", "char", "short", "int", "void", "char", "short", "int",
         "long", "float", "double", "signed", "unsigned", "id", "const",
         "volatile", "in", "out", "inout", "bycopy", "byref", "oneway",
-        "self", "super", "description"
+        "self", "super", "description", "class"
       ));
 
     typeMapping = new HashMap<String, String>();
@@ -92,13 +92,10 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     supportingFiles.add(new SupportingFile("SWGObject.h", sourceFolder, "SWGObject.h"));
     supportingFiles.add(new SupportingFile("SWGObject.m", sourceFolder, "SWGObject.m"));
-    supportingFiles.add(new SupportingFile("SWGApiClient.h", sourceFolder, "SWGApiClient.h"));
-    supportingFiles.add(new SupportingFile("SWGApiClient.m", sourceFolder, "SWGApiClient.m"));
     supportingFiles.add(new SupportingFile("SWGFile.h", sourceFolder, "SWGFile.h"));
     supportingFiles.add(new SupportingFile("SWGFile.m", sourceFolder, "SWGFile.m"));
     supportingFiles.add(new SupportingFile("SWGDate.h", sourceFolder, "SWGDate.h"));
     supportingFiles.add(new SupportingFile("SWGDate.m", sourceFolder, "SWGDate.m"));
-    supportingFiles.add(new SupportingFile("Podfile.mustache", "", "Podfile"));
   }
 
   @Override

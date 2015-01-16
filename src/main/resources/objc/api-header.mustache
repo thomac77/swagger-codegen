@@ -6,11 +6,7 @@
 {{#operations}}
 @interface {{classname}}: NSObject
 
--(void) addHeader:(NSString*)value forKey:(NSString*)key;
--(unsigned long) requestQueueSize;
-+({{classname}}*) apiWithHeader:(NSString*)headerValue key:(NSString*)key;
-+(void) setBasePath:(NSString*)basePath;
-+(NSString*) getBasePath;
+
 {{#operation}}
 /**
 
@@ -20,10 +16,10 @@
  {{#allParams}}@param {{paramName}} {{description}}
  {{/allParams}}
  */
--(NSNumber*) {{nickname}}WithCompletionBlock {{^allParams}}:{{/allParams}}{{#allParams}}{{#secondaryParam}}
-            {{paramName}}{{/secondaryParam}}: ({{{dataType}}}) {{paramName}}{{/allParams}}
-{{#returnBaseType}}{{#hasParams}}    completionHandler: {{/hasParams}}(void (^)({{returnType}} output, NSError* error))completionBlock;{{/returnBaseType}}
-{{^returnBaseType}}{{#hasParams}}    completionHandler: {{/hasParams}}(void (^)(NSError* error))completionBlock;{{/returnBaseType}}
+-(void) {{nickname}}With{{#allParams}}{{paramName}}:({{{dataType}}}) {{paramName}}
+        {{/allParams}}completionBlock: (void (^)({{returnType}} output, NSError* error))completionBlock;
+
+
 {{/operation}}
 {{/operations}}
 @end

@@ -1,71 +1,29 @@
 {{#operations}}
 #import "{{classname}}.h"
 #import "SWGFile.h"
-#import "SWGApiClient.h"
+#import "BYUHTTPRequest.h"
 {{#imports}}#import "{{import}}.h"
 {{/imports}}
-{{newline}}
 
+@interface {{classname}} ()
+@property (nonatomic) NSMutableArray *requests;
+@end
 
 @implementation {{classname}}
 static NSString * basePath = @"{{basePath}}";
 
-+({{classname}}*) apiWithHeader:(NSString*)headerValue key:(NSString*)key {
-    static {{classname}}* singletonAPI = nil;
-
-    if (singletonAPI == nil) {
-        singletonAPI = [[{{classname}} alloc] init];
-        [singletonAPI addHeader:headerValue forKey:key];
-    }
-    return singletonAPI;
-}
-
-+(void) setBasePath:(NSString*)path {
-    basePath = path;
-}
-
-+(NSString*) getBasePath {
-    return basePath;
-}
-
--(SWGApiClient*) apiClient {
-    return [SWGApiClient sharedClientFromPool:basePath];
-}
-
--(void) addHeader:(NSString*)value forKey:(NSString*)key {
-    [[self apiClient] setHeaderValue:value forKey:key];
-}
-
--(id) init {
-    self = [super init];
-    [self apiClient];
-    return self;
-}
-
--(void) setHeaderValue:(NSString*) value
-           forKey:(NSString*)key {
-    [[self apiClient] setHeaderValue:value forKey:key];
-}
-
--(unsigned long) requestQueueSize {
-    return [SWGApiClient requestQueueSize];
-}
-
-
 {{#operation}}
--(NSNumber*) {{nickname}}WithCompletionBlock{{^allParams}}: {{/allParams}}{{#allParams}}{{#secondaryParam}}
-            {{paramName}}{{/secondaryParam}}:({{{dataType}}}) {{paramName}}{{newline}}        {{/allParams}}
-        {{#returnBaseType}}{{#hasParams}}completionHandler: {{/hasParams}}(void (^)({{returnType}} output, NSError* error))completionBlock{{/returnBaseType}}
-        {{^returnBaseType}}{{#hasParams}}completionHandler: {{/hasParams}}(void (^)(NSError* error))completionBlock{{/returnBaseType}} {
+-(void) {{nickname}}With{{#allParams}}{{paramName}}:({{{dataType}}}) {{paramName}}
+        {{/allParams}}completionBlock: (void (^)({{returnType}} output, NSError* error))completionBlock
+{
 
-    id m_body = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}nil{{/bodyParam}};
     NSMutableString* requestUrl = [NSMutableString stringWithFormat:@"%@{{path}}", basePath];
 
     // remove format in URL if needed
     if ([requestUrl rangeOfString:@".{format}"].location != NSNotFound)
         [requestUrl replaceCharactersInRange: [requestUrl rangeOfString:@".{format}"] withString:@".json"];
 
-    {{#pathParams}}[requestUrl replaceCharactersInRange: [requestUrl rangeOfString:[NSString stringWithFormat:@"%@%@%@", @"{", @"{{baseName}}", @"}"]] withString: [SWGApiClient escape:{{paramName}}]];
+    {{#pathParams}}[requestUrl replaceCharactersInRange: [requestUrl rangeOfString:[NSString stringWithFormat:@"%@%@%@", @"{", @"{{baseName}}", @"}"]] withString:{{paramName}}];
     {{/pathParams}}
 
     NSString* requestContentType = @"application/json";
@@ -73,13 +31,15 @@ static NSString * basePath = @"{{basePath}}";
 
     NSMutableDictionary* queryParams = [[NSMutableDictionary alloc] init];
     {{#queryParams}}if({{paramName}} != nil)
-        queryParams[@"{{baseName}}"] = {{paramName}};{{/queryParams}}
+        queryParams[@"{{baseName}}"] = {{paramName}};
+    {{/queryParams}}
     NSMutableDictionary* headerParams = [[NSMutableDictionary alloc] init];
     {{#headerParams}}if({{paramName}} != nil)
         headerParams[@"{{baseName}}"] = {{paramName}};{{/headerParams}}
 
     id bodyDictionary = nil;
     {{#bodyParam}}
+    id m_body = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}nil{{/bodyParam}};
     if(m_body != nil && [m_body isKindOfClass:[NSArray class]]){
         NSMutableArray * objs = [[NSMutableArray alloc] init];
         for (id dict in (NSArray*)m_body) {
@@ -112,7 +72,6 @@ static NSString * basePath = @"{{basePath}}";
     else{
         NSLog(@"don't know what to do with %@", m_body);
     }
-
     {{/bodyParam}}
     
     {{#requiredParamCount}}
@@ -123,112 +82,42 @@ static NSString * basePath = @"{{basePath}}";
     {{/requiredParams}}
     {{/requiredParamCount}}
 
-    SWGApiClient* client = [SWGApiClient sharedClientFromPool:basePath];
+    BYUHTTPRequest *request = [BYUHTTPRequest requestWithURL:[NSURL URLWithString:requestUrl] queryParams:queryParams];
+    [self.requests addObject:request];
 
-    {{#returnContainer}}
-    return [client dictionary: requestUrl 
-                               method: @"{{httpMethod}}" 
-                          queryParams: queryParams 
-                                 body: bodyDictionary 
-                         headerParams: headerParams
-                   requestContentType: requestContentType
-                  responseContentType: responseContentType
-                      completionBlock: ^(NSDictionary *data, NSError *error) {
-                         if (error) {
-                             {{#returnBaseType}}completionBlock(nil, error);{{/returnBaseType}}
-                             {{^returnBaseType}}completionBlock(error);{{/returnBaseType}}
-                             return;
-                         }
-                         
-                         {{#returnBaseType}}
-                         if([data isKindOfClass:[NSArray class]]){
-                             NSMutableArray * objs = [[NSMutableArray alloc] initWithCapacity:[data count]];
-                             for (NSDictionary* dict in (NSArray*)data) {
-                                {{#returnTypeIsPrimitive}}
-                                // {{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}"){{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}}{{/instantiationType}}{{newline}}
-                                {{returnBaseType}}* d = [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}} alloc]initWithString: data];
-                                {{/returnTypeIsPrimitive}}
-                                {{^returnTypeIsPrimitive}}
-                                {{{returnBaseType}}}* d = [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}} alloc]initWithValues: dict];
-                                {{/returnTypeIsPrimitive}}
-                                [objs addObject:d];
-                             }
-                             completionBlock(objs, nil);
-                         }
-                        {{#returnSimpleType}}
-                        {{#returnTypeIsPrimitive}}{{#returnBaseType}}completionBlock( [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}} alloc]initWithString: data], nil;{{/returnBaseType}}
-                        {{/returnTypeIsPrimitive}}
-                        {{^returnTypeIsPrimitive}}
-                        {{#returnBaseType}}completionBlock( [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}} alloc]initWithValues: data], nil);{{/returnBaseType}}
-                        {{/returnTypeIsPrimitive}}
-                        {{/returnSimpleType}}
+    request.requiresB64NonceHMAC = YES;
+    [request addRequestHeader:@"Accept" value:responseContentType];
+    [request addRequestHeader:@"Content-type" value:requestContentType];
+    request.requestMethod = @"GET";
 
-                         {{/returnBaseType}}
-                    }];
-    {{/returnContainer}}
+    for (NSString *key in headerParams.allKeys) {
+        [request addRequestHeader:key value:headerParams[key]];
+    }
+    
+    if (bodyDictionary) {
+        request.postBody = [NSJSONSerialization dataWithJSONObject:bodyDictionary options:0 error:nil];
+    }
+    
+    [request startAsynchronousWithCompletionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+        if (error) {
+            completionBlock(nil, error);
+            return;
+        }
 
-    {{#returnSimpleType}}
-    {{#returnTypeIsPrimitive}}
-    {{#returnBaseType}}
-    return [client stringWithCompletionBlock: requestUrl 
-                                      method: @"{{httpMethod}}" 
-                                 queryParams: queryParams 
-                                        body: bodyDictionary 
-                                headerParams: headerParams
-                          requestContentType: requestContentType
-                         responseContentType: responseContentType
-                             completionBlock: ^(NSString *data, NSError *error) {
-                 if (error) {
-                     completionBlock(nil, error);
-                     return;
-                 }
-                {{returnBaseType}} *result = data ? [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}} alloc]initWithString: data] : nil;
-                completionBlock(result, nil);
-             }];{{/returnBaseType}}
-    {{^returnBaseType}}
-    return [client stringWithCompletionBlock:requestUrl 
-                                             method:@"{{httpMethod}}" 
-                                        queryParams:queryParams 
-                                               body:bodyDictionary 
-                                       headerParams:headerParams
-                                 requestContentType: requestContentType
-                                responseContentType: responseContentType
-                                    completionBlock:^(NSString *data, NSError *error) {
-                        if (error) {
-                            completionBlock(error);
-                            return;
-                        }
-                        completionBlock(nil);
-                    }];
-    {{/returnBaseType}}{{/returnTypeIsPrimitive}}
-    {{#returnBaseType}}{{^returnTypeIsPrimitive}}
-    return [client dictionary:requestUrl 
-                              method:@"{{httpMethod}}" 
-                         queryParams:queryParams 
-                                body:bodyDictionary 
-                        headerParams:headerParams
-                  requestContentType:requestContentType
-                 responseContentType:responseContentType
-                     completionBlock:^(NSDictionary *data, NSError *error) {
-                        if (error) {
-                            {{#returnBaseType}}completionBlock(nil, error);{{/returnBaseType}}
-                            {{^returnBaseType}}completionBlock(error);{{/returnBaseType}}
-                            return;
-                        }
-                        {{#returnBaseType}}
-                        {{returnBaseType}} *result = nil;
-                        if (data) {
-                            result = [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}}   alloc]initWithValues: data];
-                        }
-                        {{#returnBaseType}}completionBlock(result , nil);{{/returnBaseType}}
-                        {{/returnBaseType}}
-                    }];
-    {{/returnTypeIsPrimitive}}{{/returnBaseType}}{{/returnSimpleType}}
-{{newline}}
+        {{returnBaseType}} *result = nil;
+
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+
+        if (dictionary) {
+            result = [[{{{returnBaseType}}} alloc] initWithValues:dictionary];
+        }
+        completionBlock(result , nil);
+
+        [self.requests removeObject:request];
+    }];
 }
 
-{{/operation}}
 
-{{newline}}
+{{/operation}}
 {{/operations}}
 @end
