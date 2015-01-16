@@ -88,7 +88,7 @@ static NSString * basePath = @"{{basePath}}";
     request.requiresB64NonceHMAC = YES;
     [request addRequestHeader:@"Accept" value:responseContentType];
     [request addRequestHeader:@"Content-type" value:requestContentType];
-    request.requestMethod = @"GET";
+    request.requestMethod = @"{{httpMethod}}";
 
     for (NSString *key in headerParams.allKeys) {
         [request addRequestHeader:key value:headerParams[key]];
