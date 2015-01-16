@@ -55,7 +55,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
         "void", "char", "short", "int", "void", "char", "short", "int",
         "long", "float", "double", "signed", "unsigned", "id", "const",
         "volatile", "in", "out", "inout", "bycopy", "byref", "oneway",
-        "self", "super"
+        "self", "super", "description"
       ));
 
     typeMapping = new HashMap<String, String>();
@@ -155,10 +155,10 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
       importMapping.values().contains(type) ||
       defaultIncludes.contains(type) ||
       languageSpecificPrimitives.contains(type)) {
-      return Character.toUpperCase(type.charAt(0)) + type.substring(1);
+      return clean(initialCaps(type));
     }
     else {
-      return PREFIX + Character.toUpperCase(type.charAt(0)) + type.substring(1);
+      return PREFIX + clean(initialCaps(type));
     }
   }
 
@@ -168,7 +168,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
     if("".equals(modelPackage()))
       return name;
     else
-      return modelPackage() + "." + name;
+      return modelPackage() + "_" + name;
   }
 
   @Override
@@ -188,16 +188,16 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
 
   @Override
   public String toModelFilename(String name) {
-    return PREFIX + initialCaps(name);
+    return PREFIX + clean(initialCaps(name));
   }
 
   @Override
   public String toApiName(String name) {
-    return PREFIX + initialCaps(name) + "Api";
+    return PREFIX + clean(initialCaps(name)) + "Api";
   }
 
   public String toApiFilename(String name) {
-    return PREFIX + initialCaps(name) + "Api";
+    return PREFIX + clean(initialCaps(name)) + "Api";
   }
 
   @Override
@@ -211,6 +211,10 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
   }
 
   public String escapeReservedWord(String name) {
-    return "_" + name;
+    return clean("_" + name);
+  }
+
+  public String clean(String input) {
+    return input.replace(".","_");
   }
 }

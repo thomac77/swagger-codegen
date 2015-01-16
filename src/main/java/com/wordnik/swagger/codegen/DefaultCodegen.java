@@ -461,9 +461,14 @@ public class DefaultCodegen {
         property._enum = _enum;
         property.isEnum = true;
 
+        List<String> _cleanEnum = new ArrayList<String>();
+        for (String value : _enum) {
+          _cleanEnum.add(toVarName(value));
+        }
+
         // legacy support
         Map<String, Object> allowableValues = new HashMap<String, Object>();
-        allowableValues.put("values", _enum);
+        allowableValues.put("values", _cleanEnum);
         property.allowableValues = allowableValues;
       }
     }
@@ -695,7 +700,7 @@ public class DefaultCodegen {
     // op.cookieParams = cookieParams;
     op.formParams = addHasMore(formParams);
     // legacy support
-    op.nickname = operationId;
+    op.nickname = toVarName(operationId);
 
     if(op.allParams.size() > 0) 
       op.hasParams = true;

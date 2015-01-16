@@ -6,6 +6,17 @@
 {{#models}}
 {{#model}}
 
+{{#vars}}{{#isEnum}}
+#define {{datatype}} NSString*
+{{#allowableValues}}
+/*
+typedef enum : NSUInteger { {{#values}}
+  {{datatype}}_{{.}},{{/values}}
+} {{datatype}};
+*/
+{{/allowableValues}}
+{{/isEnum}}{{/vars}}
+
 @interface {{classname}} : {{^parent}}SWGObject{{/parent}}{{#parent}}{{parent}}{{/parent}}
 
 {{#vars}}
