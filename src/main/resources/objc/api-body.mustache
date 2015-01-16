@@ -37,8 +37,8 @@ static NSString * basePath = @"{{basePath}}";
     {{#headerParams}}if({{paramName}} != nil)
         headerParams[@"{{baseName}}"] = {{paramName}};{{/headerParams}}
 
-    id bodyDictionary = nil;
     {{#bodyParam}}
+    id bodyDictionary = nil;
     id m_body = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}nil{{/bodyParam}};
     if(m_body != nil && [m_body isKindOfClass:[NSArray class]]){
         NSMutableArray * objs = [[NSMutableArray alloc] init];
@@ -94,9 +94,9 @@ static NSString * basePath = @"{{basePath}}";
         [request addRequestHeader:key value:headerParams[key]];
     }
     
-    if (bodyDictionary) {
-        request.postBody = [NSJSONSerialization dataWithJSONObject:bodyDictionary options:0 error:nil];
-    }
+    {{#bodyParam}}
+    request.postBody = [NSJSONSerialization dataWithJSONObject:bodyDictionary options:0 error:nil];
+    {{/bodyParam}}
     
     [request startAsynchronousWithCompletionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         if (error) {
