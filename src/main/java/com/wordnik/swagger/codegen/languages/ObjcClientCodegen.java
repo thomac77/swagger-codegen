@@ -201,8 +201,21 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
   }
 
   @Override
+  public String toParamName(String name) {
+    return toVarName(name);
+  }
+
+  @Override
   public String toVarName(String name) {
+
     String paramName = name.replaceAll("[^a-zA-Z0-9_]","");
+
+    for(int i=0;i<paramName.length()-1;i++){
+      if(paramName.charAt(i)=='_' && (int) paramName.charAt(i+1)>=97 && (int) paramName.charAt(i+1)<=122){
+        paramName=paramName.replace(paramName.substring(i, i+2),""+(char)((int) paramName.charAt(i+1)-32));
+      }
+    }
+
     if(paramName.startsWith("new") || reservedWords.contains(paramName)) {
       return escapeReservedWord(paramName);
     }
