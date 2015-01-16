@@ -550,6 +550,7 @@ public class DefaultCodegen {
     op.summary = escapeText(operation.getSummary());
     op.notes = escapeText(operation.getDescription());
     op.tags = operation.getTags();
+    op.nickname = toVarName(operationId);
 
     Response methodResponse = null;
 
@@ -870,7 +871,5 @@ public class DefaultCodegen {
     }
     opList.add(co);
     co.baseName = tag;    
-    //co.nickname = co.httpMethod.toLowerCase() + co.baseName;
-    co.nickname = toVarName(co.operationId);
   }
 }
