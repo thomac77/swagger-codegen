@@ -17,7 +17,7 @@
  {{/allParams}}
  */
 -(void) {{nickname}}With{{#allParams}}{{paramName}}:({{{dataType}}}) {{paramName}}
-        {{/allParams}}completionBlock: (void (^)({{returnType}} output, NSError* error))completionBlock;
+        {{/allParams}}completionBlock: (void (^)({{#returnBaseType}}{{returnType}} output, {{/returnBaseType}}NSError* error))completionBlock;
 
 
 {{/operation}}

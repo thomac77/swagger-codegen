@@ -14,7 +14,7 @@ static NSString * basePath = @"{{basePath}}";
 
 {{#operation}}
 -(void) {{nickname}}With{{#allParams}}{{paramName}}:({{{dataType}}}) {{paramName}}
-        {{/allParams}}completionBlock: (void (^)({{returnType}} output, NSError* error))completionBlock
+        {{/allParams}}completionBlock: (void (^)({{#returnBaseType}}{{returnType}} output, {{/returnBaseType}}NSError* error))completionBlock
 {
 
     NSMutableString* requestUrl = [NSMutableString stringWithFormat:@"%@{{path}}", basePath];
@@ -23,7 +23,7 @@ static NSString * basePath = @"{{basePath}}";
     if ([requestUrl rangeOfString:@".{format}"].location != NSNotFound)
         [requestUrl replaceCharactersInRange: [requestUrl rangeOfString:@".{format}"] withString:@".json"];
 
-    {{#pathParams}}[requestUrl replaceCharactersInRange: [requestUrl rangeOfString:[NSString stringWithFormat:@"%@%@%@", @"{", @"{{baseName}}", @"}"]] withString:{{paramName}}];
+    {{#pathParams}}[requestUrl replaceCharactersInRange: [requestUrl rangeOfString:[NSString stringWithFormat:@"%@%@%@", @"{", @"{{baseName}}", @"}"]] withString:[NSString stringWithFormat:@"%@", {{paramName}}]];
     {{/pathParams}}
 
     NSString* requestContentType = @"application/json";
@@ -85,7 +85,7 @@ static NSString * basePath = @"{{basePath}}";
     BYUHTTPRequest *request = [BYUHTTPRequest requestWithURL:[NSURL URLWithString:requestUrl] queryParams:queryParams];
     [self.requests addObject:request];
 
-    request.requiresB64NonceHMAC = YES;
+    request.requiresB64NonceHMAC = NO;
     [request addRequestHeader:@"Accept" value:responseContentType];
     [request addRequestHeader:@"Content-type" value:requestContentType];
     request.requestMethod = @"{{httpMethod}}";
@@ -99,21 +99,11 @@ static NSString * basePath = @"{{basePath}}";
     {{/bodyParam}}
     
     [request startAsynchronousWithCompletionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
-        if (error) {
-            completionBlock(nil, error);
-            return;
-        }
-
-        {{returnBaseType}} *result = nil;
-
-        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-
-        if (dictionary) {
-            result = [[{{{returnBaseType}}} alloc] initWithValues:dictionary];
-        }
-        completionBlock(result , nil);
-
-        [self.requests removeObject:request];
+        {{#returnContainer}}{{>apiBodyResponseWithContainer}}{{/returnContainer}}
+        {{#returnSimpleType}}
+        {{#returnTypeIsPrimitive}}{{>apiPrimitiveResponse}}{{/returnTypeIsPrimitive}}
+        {{#returnBaseType}}{{>apiNonPrimitiveResponse}}{{/returnBaseType}}
+        {{/returnSimpleType}}
     }];
 }
 
