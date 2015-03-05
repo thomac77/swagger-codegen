@@ -6,14 +6,27 @@
 {{#models}}
 {{#model}}
 
-@interface {{classname}} : SWGObject
+{{#vars}}{{#isEnum}}
+#define {{datatype}} NSString*
+{{#allowableValues}}
+/*
+typedef enum : NSUInteger { {{#values}}
+  {{datatype}}_{{.}},{{/values}}
+} {{datatype}};
+*/
+{{/allowableValues}}
+{{/isEnum}}{{/vars}}
+
+@interface {{classname}} : {{^parent}}SWGObject{{/parent}}{{#parent}}{{parent}}{{/parent}}
 
 {{#vars}}
 @property(nonatomic) {{datatype}} {{name}};  {{#description}}/* {{{description}}} {{#isNotRequired}}[optional]{{/isNotRequired}} */{{/description}}{{newline}}
 {{/vars}}
-- (id) {{#vars}}{{name}}: ({{datatype}}) {{name}}{{#hasMore}}{{newline}}     {{/hasMore}}{{^hasMore}};{{/hasMore}}
-    {{/vars}}
-{{newline}}
+{{#hasVars}}
+- (id) {{#vars}}{{name}}: ({{datatype}}) {{name}}{{#hasMore}}
+  {{/hasMore}}{{^hasMore}};{{/hasMore}}
+       {{/vars}}
+{{/hasVars}}
 - (id) initWithValues: (NSDictionary*)dict;
 - (NSDictionary*) asDictionary;
 {{newline}}

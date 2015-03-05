@@ -12,10 +12,6 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
   protected String sourceFolder = "client";
   protected static String PREFIX = "SWG";
 
-  public CodegenType getTag() {
-    return CodegenType.CLIENT;
-  }
-  
   public String getName() {
     return "objc";
   }
@@ -33,8 +29,6 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
     apiTemplateFiles.put("api-body.mustache", ".m");
     templateDir = "objc";
     modelPackage = "";
-
-    additionalProperties.put("projectName", "swaggerClient");
 
     defaultIncludes = new HashSet<String>(
       Arrays.asList(
@@ -61,7 +55,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
         "void", "char", "short", "int", "void", "char", "short", "int",
         "long", "float", "double", "signed", "unsigned", "id", "const",
         "volatile", "in", "out", "inout", "bycopy", "byref", "oneway",
-        "self", "super", "description"
+        "self", "super", "description", "class"
       ));
 
     typeMapping = new HashMap<String, String>();
@@ -98,13 +92,10 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     supportingFiles.add(new SupportingFile("SWGObject.h", sourceFolder, "SWGObject.h"));
     supportingFiles.add(new SupportingFile("SWGObject.m", sourceFolder, "SWGObject.m"));
-    supportingFiles.add(new SupportingFile("SWGApiClient.h", sourceFolder, "SWGApiClient.h"));
-    supportingFiles.add(new SupportingFile("SWGApiClient.m", sourceFolder, "SWGApiClient.m"));
     supportingFiles.add(new SupportingFile("SWGFile.h", sourceFolder, "SWGFile.h"));
     supportingFiles.add(new SupportingFile("SWGFile.m", sourceFolder, "SWGFile.m"));
     supportingFiles.add(new SupportingFile("SWGDate.h", sourceFolder, "SWGDate.h"));
     supportingFiles.add(new SupportingFile("SWGDate.m", sourceFolder, "SWGDate.m"));
-    supportingFiles.add(new SupportingFile("Podfile.mustache", "", "Podfile"));
   }
 
   @Override
@@ -161,19 +152,20 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
       importMapping.values().contains(type) ||
       defaultIncludes.contains(type) ||
       languageSpecificPrimitives.contains(type)) {
-      return Character.toUpperCase(type.charAt(0)) + type.substring(1);
+      return clean(initialCaps(type));
     }
     else {
-      return PREFIX + Character.toUpperCase(type.charAt(0)) + type.substring(1);
+      return PREFIX + clean(initialCaps(type));
     }
   }
 
   @Override
   public String toModelImport(String name) {
+    // name = name + ".h";
     if("".equals(modelPackage()))
       return name;
     else
-      return modelPackage() + "." + name;
+      return modelPackage() + "_" + name;
   }
 
   @Override
@@ -193,21 +185,34 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
 
   @Override
   public String toModelFilename(String name) {
-    return PREFIX + initialCaps(name);
+    return PREFIX + clean(initialCaps(name));
   }
 
   @Override
   public String toApiName(String name) {
-    return PREFIX + initialCaps(name) + "Api";
+    return PREFIX + clean(initialCaps(name)) + "Api";
   }
 
   public String toApiFilename(String name) {
-    return PREFIX + initialCaps(name) + "Api";
+    return PREFIX + clean(initialCaps(name)) + "Api";
+  }
+
+  @Override
+  public String toParamName(String name) {
+    return toVarName(name);
   }
 
   @Override
   public String toVarName(String name) {
+
     String paramName = name.replaceAll("[^a-zA-Z0-9_]","");
+
+    for(int i=0;i<paramName.length()-1;i++){
+      if(paramName.charAt(i)=='_' && (int) paramName.charAt(i+1)>=97 && (int) paramName.charAt(i+1)<=122){
+        paramName=paramName.replace(paramName.substring(i, i+2),""+(char)((int) paramName.charAt(i+1)-32));
+      }
+    }
+
     if(paramName.startsWith("new") || reservedWords.contains(paramName)) {
       return escapeReservedWord(paramName);
     }
@@ -216,6 +221,10 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
   }
 
   public String escapeReservedWord(String name) {
-    return "_" + name;
+    return clean("_" + name);
+  }
+
+  public String clean(String input) {
+    return input.replace(".","_");
   }
 }
