@@ -1,5 +1,3 @@
-        {{^returnTypeIsPrimitive}}
-        // comples response type
         if (error) {
             completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
             return;
@@ -10,6 +8,6 @@
         if (dictionary) {
             result = [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}}   alloc]initWithValues: dictionary];
         }
-        {{#returnBaseType}}completionBlock(result , nil);{{/returnBaseType}}
         {{/returnBaseType}}
-        {{/returnTypeIsPrimitive}}
+        completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        

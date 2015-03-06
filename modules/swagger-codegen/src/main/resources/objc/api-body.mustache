@@ -99,11 +99,12 @@ static NSString * basePath = @"{{basePath}}";
     {{/bodyParam}}
     
     [request startAsynchronousWithCompletionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
-        {{#returnContainer}}{{>apiBodyResponseWithContainer}}{{/returnContainer}}
-        {{#returnSimpleType}}
-        {{#returnTypeIsPrimitive}}{{>apiPrimitiveResponse}}{{/returnTypeIsPrimitive}}
-        {{#returnBaseType}}{{>apiNonPrimitiveResponse}}{{/returnBaseType}}
-        {{/returnSimpleType}}
+{{#returnContainer}}{{>apiBodyResponseWithContainer}}{{/returnContainer}}
+{{#returnSimpleType}}
+{{#returnTypeIsPrimitive}}{{>apiPrimitiveResponse}}{{/returnTypeIsPrimitive}}
+{{#returnBaseType}}{{^returnTypeIsPrimitive}}{{>apiNonPrimitiveResponse}}{{/returnTypeIsPrimitive}}{{/returnBaseType}}
+{{/returnSimpleType}}
+        [self.requests removeObject:request];
     }];
 }
 

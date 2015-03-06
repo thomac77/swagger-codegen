@@ -1,4 +1,3 @@
-        // comples response type
         if (error) {
             completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
             return;
@@ -8,5 +7,6 @@
         if (data) {
             result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
         }
-        {{#returnBaseType}}completionBlock(result , nil);{{/returnBaseType}}
         {{/returnBaseType}}
+        completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        

@@ -1,5 +1,3 @@
-        // {{returnContainer}} container response type
-
         if (error) {
             completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
             return;
@@ -13,17 +11,11 @@
         {{#returnBaseType}}
         NSArray *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSMutableArray * objs = [[NSMutableArray alloc] initWithCapacity:[result count]];
+        
         for (NSDictionary* dict in (NSArray*)result) {
-            {{#returnTypeIsPrimitive}}
-            {{returnBaseType}}* d = [[{{{returnBaseType}}} alloc]initWithString: dict];
-            {{/returnTypeIsPrimitive}}
-            {{^returnTypeIsPrimitive}}
-            {{{returnBaseType}}}* d = [[{{{returnBaseType}}} alloc]initWithValues: dict];
-            {{/returnTypeIsPrimitive}}
+            {{returnBaseType}}* d = [[{{returnBaseType}} alloc]initWith{{#returnTypeIsPrimitive}}String{{/returnTypeIsPrimitive}}{{^returnTypeIsPrimitive}}Values{{/returnTypeIsPrimitive}}: dict];
             [objs addObject:d];
         }
-        completionBlock(objs, nil);
-        {{/returnBaseType}}
-        {{/isMapContainer}}
 
-        [self.requests removeObject:request];
+        completionBlock(objs, nil);
+        {{/returnBaseType}}{{/isMapContainer}}
