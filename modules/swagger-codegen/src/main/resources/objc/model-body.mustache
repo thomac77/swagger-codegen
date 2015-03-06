@@ -5,9 +5,9 @@
 
 @implementation {{classname}}
 
--(id){{#vars}}{{name}}: ({{datatype}}) {{name}}
-    {{/vars}}
-{{newline}}{
+-(id) initWith{{#vars}}{{name}}: ({{datatype}}) {{name}}{{#hasMore}}
+      {{/hasMore}}{{/vars}}
+{
     {{#vars}}_{{name}} = {{name}};
     {{/vars}}
 
