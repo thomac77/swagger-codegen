@@ -21,6 +21,6 @@ cd $APP_DIR
 
 # if you've executed sbt assembly previously it will use that instead.
 export JAVA_OPTS="${JAVA_OPTS} -XX:MaxPermSize=256M -Xmx1024M -DloggerPath=conf/log4j.properties"
-ags="$@ com.wordnik.swagger.codegen.Codegen -i ../../Documents/BYU-API/classes/swagger.js -l objc -o /tmp/output -t src/main/resources/objc"
+ags="$@ com.wordnik.swagger.codegen.Codegen -i ../../Documents/BYU-API/classes/swagger.js -l objc -o /tmp/output -t modules/swagger-codegen/src/main/resources/objc/"
 
 java -cp $APP_DIR/target/*:$APP_DIR/target/lib/* $ags
