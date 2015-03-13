@@ -2,6 +2,7 @@ var swagger = require("swagger-node-express");
 var url = require("url");
 var errors = swagger.errors;
 var params = swagger.params;
+var datasource = require("./datasource.js") //Codegen doesn't create this file. You need to.
 
 /* add model includes */
 
@@ -55,7 +56,7 @@ exports.{{nickname}} = {
     }
     {{/requiredParams}}
     {{/requiredParamCount}}
-    writeResponse(res, {message: "how about implementing {{nickname}} as a {{httpMethod}} method?"});    
+    writeResponse(res, datasource.{{nickname}}(req));    
   }
 };
 {{/operation}}
