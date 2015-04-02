@@ -1,5 +1,7 @@
         if (error) {
-            completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
+            }];
             return;
         }
         {{#returnBaseType}}
@@ -9,5 +11,7 @@
             result = [[{{#instantiationType}}NSClassFromString(@"{{{instantiationType}}}") {{/instantiationType}}{{^instantiationType}}{{{returnBaseType}}} {{/instantiationType}}   alloc]initWithValues: dictionary];
         }
         {{/returnBaseType}}
-        completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        }];
         

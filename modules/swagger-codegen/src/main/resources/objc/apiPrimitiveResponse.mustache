@@ -1,5 +1,7 @@
         if (error) {
-            completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                completionBlock({{#returnBaseType}}nil, {{/returnBaseType}}error);
+            }];
             return;
         }
         {{#returnBaseType}}
@@ -8,5 +10,7 @@
             result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
         }
         {{/returnBaseType}}
-        completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            completionBlock({{#returnBaseType}}result, {{/returnBaseType}}nil);
+        }];
         

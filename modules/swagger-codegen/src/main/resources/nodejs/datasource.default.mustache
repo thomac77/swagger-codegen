@@ -1,6 +1,6 @@
 {{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
 exports.{{nickname}} = function (req) {
-	//The following variables are available to you
+	//The following variables are available to you:
 	{{#queryParams}}//req.query.{{paramName}}
 	{{/queryParams}}{{#pathParams}}//req.params.{{paramName}}
 	{{/pathParams}}{{#headerParams}}//req.headers.{{paramName}}

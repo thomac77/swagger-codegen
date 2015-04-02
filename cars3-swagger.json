@@ -9,7 +9,7 @@
     "schemes": [
         "https"
     ],
-    "basePath": "/byuapitutorial/cars/v1",
+    "basePath": "/byuapi/tutorial3-cars",
     "produces": [
         "application/json"
     ],
@@ -75,6 +75,24 @@
                         "description": "The ID of the owner of the vehicle",
                         "required": false,
                         "type": "string"
+                    },
+                    {
+                        "name": "page_start",
+                        "in": "query",
+                        "description": "Specifies how far to skip into a large set",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 1
+                    },
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "description": "Specifies how many items to return from a large set",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 50
                     }
                 ],
                 "tags": [
@@ -84,7 +102,7 @@
                     "200": {
                         "description": "Collection Retrieved",
                         "schema": {
-                            "$ref": "#/definitions/cars"
+                            "$ref": "#/definitions/carsWrapper"
                         }
                     },
                     "400": {
@@ -144,7 +162,7 @@
                     "Cars"
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Car Added",
                         "schema": {
                             "$ref": "#/definitions/car"
@@ -185,7 +203,6 @@
             "options": {
                 "summary": "Cars",
                 "description": "What can this endpoint do?",
-                "operationId": "carsOptions",
                 "tags": [
                     "Cars"
                 ],
@@ -198,18 +215,6 @@
                     },
                     "400": {
                         "description": "Invalid Request - unable to interpret request",
-                        "schema": {
-                            "$ref": "#/definitions/error"
-                        }
-                    },
-                    "401": {
-                        "description": "Authentication required to access data",
-                        "schema": {
-                            "$ref": "#/definitions/error"
-                        }
-                    },
-                    "403": {
-                        "description": "Access denied to protected data",
                         "schema": {
                             "$ref": "#/definitions/error"
                         }
@@ -388,19 +393,101 @@
                         }
                     }
                 }
+            },
+            "options": {
+                "summary": "Cars",
+                "description": "What can this endpoint do?",
+                "operationId": "carOptions",
+                "parameters": [
+                    {
+                        "name": "vin",
+                        "in": "path",
+                        "description": "Vehicle Identification Number",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supported HTTP Methods",
+                        "schema": {
+                            "$ref": "#/definitions/methods"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
+        "carsWrapper": {
+            "type": "object",
+            "properties": {
+                "cars": {
+                    "$ref": "#/definitions/cars"
+                }
+            }
+        },
         "cars": {
             "description": "A collection of Cars",
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/car"
+            "type": "object",
+            "required": [
+                "values"
+            ],
+            "properties": {
+                "links": {
+                    "description": "Hypermedia Links that impact the entire Cars collection",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/links"
+                    }
+                },
+                "metadata": {
+                    "$ref": "#/definitions/top_level_metadata"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/car"
+                    }
+                }
             }
         },
         "car": {
             "description": "Car Item",
+            "type": "object",
+            "required": [
+                "basic"
+            ],
+            "properties": {
+                "links": {
+                    "description": "Hypermedia Links that impact an item in the Cars collection",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/links"
+                    }
+                },
+                "basic": {
+                    "$ref": "#/definitions/basic"
+                }
+            }
+        },
+        "basic": {
+            "description": "Car Basic Item",
             "type": "object",
             "required": [
                 "vin",
@@ -414,92 +501,117 @@
                 "owner_id",
                 "owner_name",
                 "created_by_id",
-                "created_by_name",
                 "created_date_time",
                 "updated_by_id",
-                "updated_by_name",
                 "updated_date_time"
             ],
             "properties": {
                 "vin": {
-                    "description": "Vehicle Identification Number",
-                    "type": "string",
-                    "maxLength": 16
+                    "$ref": "#/definitions/vin"
                 },
                 "plate_state": {
-                    "description": "License Plate State",
-                    "type": "string",
-                    "maxLength": 2
+                    "$ref": "#/definitions/plate_state"
                 },
                 "plate_number": {
-                    "description": "License Plate Number",
-                    "type": "string"
+                    "$ref": "#/definitions/plate_number"
                 },
                 "vehicle_type": {
-                    "description": "Type of Vehicle",
-                    "type": "string",
-                    "enum": [
-                        "Car/Sedan/Coupe",
-                        "Delivery/Service Truck",
-                        "Moped/Scooter",
-                        "Motorcycle",
-                        "Other",
-                        "Truck/SUV"
-                    ]
+                    "$ref": "#/definitions/vehicle_type"
                 },
                 "vehicle_year": {
-                    "description": "Model Year of the Vehicle",
-                    "type": "string",
-                    "maxLength": 4
+                    "$ref": "#/definitions/vehicle_year"
                 },
                 "make": {
-                    "description": "Make of the Vehicle",
-                    "type": "string"
+                    "$ref": "#/definitions/make"
                 },
                 "model": {
-                    "description": "Model of the Vehicle",
-                    "type": "string"
+                    "$ref": "#/definitions/model"
                 },
                 "color": {
-                    "description": "Color of the Vehicle",
-                    "type": "string"
+                    "$ref": "#/definitions/color"
                 },
                 "owner_id": {
-                    "description": "The ID of the owner of the vehicle",
-                    "type": "string",
-                    "maxLength": 9
+                    "$ref": "#/definitions/owner_id"
                 },
                 "owner_name": {
-                    "description": "The name of the owner of the vehicle",
-                    "type": "string"
+                    "$ref": "#/definitions/owner_name"
                 },
                 "created_by_id": {
-                    "description": "The ID of the person that created the vehicle entry",
-                    "type": "string",
-                    "maxLength": 9
-                },
-                "created_by_name": {
-                    "description": "The name of the person that created the vehicle entry",
-                    "type": "string"
+                    "$ref": "#/definitions/created_by_id"
                 },
                 "created_date_time": {
-                    "description": "When the vehicle entry was created",
-                    "type": "string",
-                    "format": "date-time"
+                    "$ref": "#/definitions/created_date_time"
                 },
                 "updated_by_id": {
-                    "description": "The ID of the person that last updated the vehicle entry",
-                    "type": "string",
-                    "maxLength": 9
-                },
-                "updated_by_name": {
-                    "description": "The name of the person that last updated the vehicle entry",
-                    "type": "string"
+                    "$ref": "#/definitions/updated_by_id"
                 },
                 "updated_date_time": {
-                    "description": "When the vehicle entry was last updated",
+                    "$ref": "#/definitions/updated_date_time"
+                }
+            }
+        },
+        "links": {
+            "description": "Hypermedia links format",
+            "type": "object",
+            "required": [
+                "rel",
+                "href",
+                "method"
+            ],
+            "properties": {
+                "rel": {
+                    "type": "string"
+                },
+                "href": {
                     "type": "string",
-                    "format": "date-time"
+                    "format": "uri"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": [
+                        "DELETE",
+                        "GET",
+                        "OPTIONS",
+                        "POST",
+                        "PUT"
+                    ]
+                }
+            }
+        },
+        "top_level_metadata": {
+            "type": "object",
+            "required": [
+                "collection_size",
+                "page_start",
+                "page_end",
+                "page_size",
+                "default_page_size",
+                "maximum_page_size"
+            ],
+            "properties": {
+                "collection_size": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page_start": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page_end": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "default_page_size": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "maximum_page_size": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
@@ -524,6 +636,341 @@
             "type": "array",
             "items": {
                 "type": "string"
+            }
+        },
+        "vin": {
+            "description": "Vehicle Identification Number",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 16
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "key",
+                        "read-only",
+                        "modifiable"
+                    ]
+                }
+            }
+        },
+        "plate_state": {
+            "description": "License Plate State",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "description",
+                "domain"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 2
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "plate_number": {
+            "description": "License Plate Number",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                }
+            }
+        },
+        "vehicle_type": {
+            "description": "Type of Vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "domain"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "enum": [
+                        "Car/Sedan/Coupe",
+                        "Delivery/Service Truck",
+                        "Moped/Scooter",
+                        "Motorcycle",
+                        "Other",
+                        "Truck/SUV"
+                    ]
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable",
+                        "derived"
+                    ]
+                },
+                "domain": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "vehicle_year": {
+            "description": "Model Year of the Vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 4
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                }
+            }
+        },
+        "make": {
+            "description": "Make of the Vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "domain"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                },
+                "domain": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "model": {
+            "description": "Model of the Vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "domain"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                },
+                "domain": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "color": {
+            "description": "Color of the Vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "domain"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                },
+                "domain": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "owner_id": {
+            "description": "The ID of the owner of the vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable"
+                    ]
+                }
+            }
+        },
+        "owner_name": {
+            "description": "The name of the owner of the vehicle",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "read-only",
+                        "modifiable",
+                        "related"
+                    ]
+                },
+                "related-resource": {
+                    "type": "string"
+                }
+            }
+        },
+        "created_by_id": {
+            "description": "The ID of the person that created the vehicle entry",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "description"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "system"
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "created_date_time": {
+            "description": "When the vehicle entry was created",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "system"
+                    ]
+                }
+            }
+        },
+        "updated_by_id": {
+            "description": "The ID of the person that last updated the vehicle entry",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type",
+                "description"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "system"
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "updated_date_time": {
+            "description": "When the vehicle entry was last updated",
+            "type": "object",
+            "required": [
+                "value",
+                "api_type"
+            ],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "api_type": {
+                    "type": "string",
+                    "enum": [
+                        "system"
+                    ]
+                }
             }
         }
     }

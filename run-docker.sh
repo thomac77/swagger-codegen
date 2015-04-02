@@ -1,1 +1,1 @@
-docker run -i -t --rm -v $(pwd)/../nodejs:/tmp/output -v $(pwd):/opt/swagger-codegen joshgubler/swagger-codegen
+docker run -i -t --rm -v $(pwd):/opt/swagger-codegen -v $(pwd)/../nodejs:/opt/swagger-codegen/output/nodejs -v /Users/joshgubler/Documents/iOS/edge-ux/byuSuite/Apps/SwaggerClasses:/opt/swagger-codegen/output/objc joshgubler/swagger-codegen
