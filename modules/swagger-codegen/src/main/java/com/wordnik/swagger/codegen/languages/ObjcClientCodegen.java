@@ -82,6 +82,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     importMapping = new HashMap<String, String> ();
     importMapping.put("Date", "SWGDate");
+    importMapping.put("array", "SWGArray");
 
     foundationClasses = new HashSet<String> (
       Arrays.asList(
@@ -91,7 +92,7 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
         "NSDictionary")
       );
 
-    instantiationTypes.put("array", "NSMutableArray");
+    instantiationTypes.put("array", "SWGArray");
     instantiationTypes.put("map", "NSMutableDictionary");
 
     supportingFiles.add(new SupportingFile("SWGObject.h", sourceFolder, "SWGObject.h"));
@@ -100,6 +101,8 @@ public class ObjcClientCodegen extends DefaultCodegen implements CodegenConfig {
     supportingFiles.add(new SupportingFile("SWGFile.m", sourceFolder, "SWGFile.m"));
     supportingFiles.add(new SupportingFile("SWGDate.h", sourceFolder, "SWGDate.h"));
     supportingFiles.add(new SupportingFile("SWGDate.m", sourceFolder, "SWGDate.m"));
+    supportingFiles.add(new SupportingFile("SWGArray.h", sourceFolder, "SWGArray.h"));
+    supportingFiles.add(new SupportingFile("SWGArray.m", sourceFolder, "SWGArray.m"));
   }
 
   @Override

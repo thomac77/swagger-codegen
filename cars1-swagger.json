@@ -1,0 +1,573 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Cars",
+        "description": "Cars Resource of the University API Tutorial",
+        "version": "v1"
+    },
+    "host": "edge-wso2.byu.edu:8243",
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/byuapi/tutorial1-cars",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Cars",
+                "description": "Returns a collection of Cars",
+                "operationId": "getCars",
+                "parameters": [
+                    {
+                        "name": "plate_state",
+                        "in": "query",
+                        "description": "License Plate State",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "plate_number",
+                        "in": "query",
+                        "description": "License Plate Number",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "vehicle_type",
+                        "in": "query",
+                        "description": "Type of Vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "vehicle_year",
+                        "in": "query",
+                        "description": "Model Year of the Vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "make",
+                        "in": "query",
+                        "description": "Make of the Vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "model",
+                        "in": "query",
+                        "description": "Model of the Vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "color",
+                        "in": "query",
+                        "description": "Color of the Vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "The ID of the owner of the vehicle",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page_start",
+                        "in": "query",
+                        "description": "Specifies how far to skip into a large set",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 1
+                    },
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "description": "Specifies how many items to return from a large set",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 50
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Collection Retrieved",
+                        "schema": {
+                            "$ref": "#/definitions/cars"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required to access data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied to protected data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "404": {
+                        "description": "No Cars satisfy the query parameters - the collection is empty",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "409": {
+                        "description": "Query parameters conflict or are malformed",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cars",
+                "description": "Create a new Car",
+                "operationId": "createCar",
+                "parameters": [
+                    {
+                        "name": "car",
+                        "in": "body",
+                        "description": "The Car to be added",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/car"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Car Added",
+                        "schema": {
+                            "$ref": "#/definitions/car"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required to access data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied to protected data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "409": {
+                        "description": "Request Body conflicts or is malformed",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            },
+            "options": {
+                "summary": "Cars",
+                "description": "What can this endpoint do?",
+                "operationId": "carsOptions",
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supported HTTP Methods",
+                        "schema": {
+                            "$ref": "#/definitions/methods"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            }
+        },
+        "/{vin}": {
+            "get": {
+                "summary": "Cars",
+                "description": "Returns a specific Car",
+                "operationId": "getCar",
+                "parameters": [
+                    {
+                        "name": "vin",
+                        "in": "path",
+                        "description": "Vehicle Identification Number",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item Retrieved",
+                        "schema": {
+                            "$ref": "#/definitions/car"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required to access data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied to protected data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "404": {
+                        "description": "No Cars satisfy the request - the collection is empty",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Cars",
+                "description": "Delete a specific Car",
+                "operationId": "deleteCar",
+                "parameters": [
+                    {
+                        "name": "vin",
+                        "in": "path",
+                        "description": "Vehicle Identification Number",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Car successfully removed"
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required to access data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied to protected data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Cars",
+                "description": "Modify a specific Car",
+                "operationId": "modifyCar",
+                "parameters": [
+                    {
+                        "name": "vin",
+                        "in": "path",
+                        "description": "Vehicle Identification Number",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "car",
+                        "in": "body",
+                        "description": "The Car to be modified",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/car"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Car Modified",
+                        "schema": {
+                            "$ref": "#/definitions/car"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required to access data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied to protected data",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "409": {
+                        "description": "Request Body conflicts or is malformed",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            },
+            "options": {
+                "summary": "Cars",
+                "description": "What can this endpoint do?",
+                "operationId": "carOptions",
+                "parameters": [
+                    {
+                        "name": "vin",
+                        "in": "path",
+                        "description": "Vehicle Identification Number",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supported HTTP Methods",
+                        "schema": {
+                            "$ref": "#/definitions/methods"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request - unable to interpret request",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "cars": {
+            "description": "A collection of Cars",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/car"
+            }
+        },
+        "car": {
+            "description": "Car Item",
+            "type": "object",
+            "required": [
+                "vin",
+                "plate_state",
+                "plate_number",
+                "vehicle_type",
+                "vehicle_year",
+                "make",
+                "model",
+                "color",
+                "owner_id",
+                "owner_name",
+                "created_by_id",
+                "created_by_name",
+                "created_date_time",
+                "updated_by_id",
+                "updated_by_name",
+                "updated_date_time"
+            ],
+            "properties": {
+                "vin": {
+                    "description": "Vehicle Identification Number",
+                    "type": "string",
+                    "maxLength": 16
+                },
+                "plate_state": {
+                    "description": "License Plate State",
+                    "type": "string",
+                    "maxLength": 2
+                },
+                "plate_number": {
+                    "description": "License Plate Number",
+                    "type": "string"
+                },
+                "vehicle_type": {
+                    "description": "Type of Vehicle",
+                    "type": "string",
+                    "enum": [
+                        "Car/Sedan/Coupe",
+                        "Delivery/Service Truck",
+                        "Moped/Scooter",
+                        "Motorcycle",
+                        "Other",
+                        "Truck/SUV"
+                    ]
+                },
+                "vehicle_year": {
+                    "description": "Model Year of the Vehicle",
+                    "type": "string",
+                    "maxLength": 4
+                },
+                "make": {
+                    "description": "Make of the Vehicle",
+                    "type": "string"
+                },
+                "model": {
+                    "description": "Model of the Vehicle",
+                    "type": "string"
+                },
+                "color": {
+                    "description": "Color of the Vehicle",
+                    "type": "string"
+                },
+                "owner_id": {
+                    "description": "The ID of the owner of the vehicle",
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "owner_name": {
+                    "description": "The name of the owner of the vehicle",
+                    "type": "string"
+                },
+                "created_by_id": {
+                    "description": "The ID of the person that created the vehicle entry",
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "created_by_name": {
+                    "description": "The name of the person that created the vehicle entry",
+                    "type": "string"
+                },
+                "created_date_time": {
+                    "description": "When the vehicle entry was created",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_by_id": {
+                    "description": "The ID of the person that last updated the vehicle entry",
+                    "type": "string",
+                    "maxLength": 9
+                },
+                "updated_by_name": {
+                    "description": "The name of the person that last updated the vehicle entry",
+                    "type": "string"
+                },
+                "updated_date_time": {
+                    "description": "When the vehicle entry was last updated",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "error": {
+            "description": "Error Information",
+            "type": "object",
+            "properties": {
+                "return_code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "explanation": {
+                    "type": "string"
+                },
+                "error_data": {
+                    "type": "string"
+                }
+            }
+        },
+        "methods": {
+            "description": "Supported HTTP Methods",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
+}

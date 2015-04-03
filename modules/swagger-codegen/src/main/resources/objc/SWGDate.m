@@ -10,7 +10,7 @@
         NSLocale *locale = [[NSLocale new]                        
                             initWithLocaleIdentifier:@"en_US_POSIX"];
         [df setLocale:locale];
-        [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+        [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSxxx"];
 
         _date = [df dateFromString:input];
     }
@@ -26,7 +26,7 @@
     NSLocale *locale = [[NSLocale new]                        
                         initWithLocaleIdentifier:@"en_US_POSIX"];
     [df setLocale:locale];
-    [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSxxx"];
     
     return [df stringFromDate:_date];
 }

@@ -57,12 +57,12 @@
             for( {{complexType}} *{{name}} in (NSArray*)_{{name}}) {
                 [array addObject:[(SWGObject*){{name}} asDictionary]];
             }
-            dict[@"{{name}}"] = array;
+            dict[@"{{baseName}}"] = array;
         }
         else if(_{{name}} && [_{{name}} isKindOfClass:[SWGDate class]]) {
             NSString * dateString = [(SWGDate*)_{{name}} toString];
             if(dateString){
-                dict[@"{{name}}"] = dateString;
+                dict[@"{{baseName}}"] = dateString;
             }
         }
         else {

@@ -219,9 +219,9 @@ class ObjcModelTest extends FlatSpec with Matchers {
     cm.classname should be ("SWGSample")
     cm.description should be ("an array model")
     cm.vars.size should be (0)
-    cm.parent should be ("NSMutableArray")
+    cm.parent should be ("SWGArray")
     cm.imports.size should be (3)
-    (cm.imports.asScala.toSet & Set("SWGChildren", "NSArray", "NSMutableArray")).size should be (3)
+    (cm.imports.asScala.toSet & Set("SWGChildren", "NSArray", "SWGArray")).size should be (3)
   }
 
   it should "convert an map model" in {
