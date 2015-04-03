@@ -21,6 +21,11 @@
     return self;
 }
 
+- (id) initWithDate:(NSDate*)date {
+    _date = date;
+    return self;
+}
+
 -(NSString*) toString {
     NSDateFormatter* df = [NSDateFormatter new];
     NSLocale *locale = [[NSLocale new]                        

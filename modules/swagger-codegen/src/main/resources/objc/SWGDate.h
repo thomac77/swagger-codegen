@@ -8,5 +8,6 @@
 @property(nonatomic, readonly) NSDate* date;
 
 - (id) initWithValues: (NSString*)input;
+- (id) initWithDate: (NSDate*)date;
 -(NSString*) toString;
 @end
