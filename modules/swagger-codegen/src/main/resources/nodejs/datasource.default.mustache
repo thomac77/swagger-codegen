@@ -6,6 +6,11 @@ exports.{{nickname}} = function (req) {
 	{{/pathParams}}{{#headerParams}}//req.headers.{{paramName}}
     {{/headerParams}}{{#bodyParams}}//req.body.{{paramName}}
     {{/bodyParams}}
+    {{#examples}}
+    return {{{example}}}
+    {{/examples}}
+    {{^examples}}
 	return {message: "how about implementing {{nickname}} as a {{httpMethod}} method?"}
+	{{/examples}}
 }
 {{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
