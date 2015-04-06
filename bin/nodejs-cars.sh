@@ -32,6 +32,6 @@ fi
 # if you've executed sbt assembly previously it will use that instead.
 export JAVA_OPTS="${JAVA_OPTS} -XX:MaxPermSize=256M -Xmx1024M -DloggerPath=conf/log4j.properties"
 #ags="$@ -i modules/swagger-codegen/src/test/resources/2_0/petstore.json -l nodejs -o samples/server/petstore/nodejs"
-ags="$@ -i cars1-swagger.json -l nodejs -o output/nodejs/ -t modules/swagger-codegen/src/main/resources/nodejs/"
+ags="$@ -i cars3-swagger.json -l nodejs -o output/nodejs/ -t modules/swagger-codegen/src/main/resources/nodejs/"
 
 java $JAVA_OPTS -jar $executable $ags
